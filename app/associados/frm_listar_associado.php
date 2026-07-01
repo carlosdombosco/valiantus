@@ -1681,7 +1681,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<!-- Scripts que dependem de jQuery: carregados por último, após jQuery do template -->
 <script src="<?= APP_URL ?>/associados/carregar_cidades.js"></script>
-<script src="<?= APP_URL ?>/associados/combo.js"></script>
-<script src="<?= APP_URL ?>/associados/fipe.js"></script>

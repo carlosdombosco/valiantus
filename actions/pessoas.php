@@ -196,17 +196,38 @@ $acao = $_POST['acao'] ?? '';
 
 // ========= POST: verificar_cpf =========
 if ($acao === 'verificar_cpf') {
-    $cpf   = only_digits($_POST['cpf'] ?? '');
-    $excId = (int)($_POST['id'] ?? 0);
-    if ($excId > 0) {
-        $st = $pdo->prepare("SELECT COUNT(*) FROM tb_pessoa WHERE PES_CPF_CNPJ = :cpf AND PES_CODIGO_PK <> :id");
-        $st->execute([':cpf' => $cpf, ':id' => $excId]);
-    } else {
-        $st = $pdo->prepare("SELECT COUNT(*) FROM tb_pessoa WHERE PES_CPF_CNPJ = :cpf");
-        $st->execute([':cpf' => $cpf]);
+    try {
+        $cpf   = only_digits($_POST['cpf'] ?? '');
+        $excId = (int)($_POST['id'] ?? 0);
+        $where = $excId > 0 ? 'AND PES_CODIGO_PK <> :id' : '';
+        $st = $pdo->prepare("
+            SELECT PES_CODIGO_PK, PES_NOME, PES_CPF_CNPJ,
+                   COALESCE(PES_FONE_CELULAR_1, PES_FONE_CELULAR_2, PES_FONE_FIXO, '') AS telefone
+            FROM tb_pessoa
+            WHERE PES_CPF_CNPJ = :cpf $where
+            LIMIT 1
+        ");
+        $params = [':cpf' => $cpf];
+        if ($excId > 0) $params[':id'] = $excId;
+        $st->execute($params);
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            echo json_encode([
+                'success' => true,
+                'existe'  => true,
+                'pessoa'  => [
+                    'id'       => $row['PES_CODIGO_PK'],
+                    'nome'     => $row['PES_NOME'],
+                    'cpf'      => $row['PES_CPF_CNPJ'],
+                    'telefone' => $row['telefone'],
+                ],
+            ]);
+        } else {
+            echo json_encode(['success' => true, 'existe' => false]);
+        }
+    } catch (Throwable $e) {
+        echo json_encode(['success' => false, 'existe' => false]);
     }
-    $existe = $st->fetchColumn() > 0;
-    echo json_encode(['success' => true, 'existe' => $existe]);
     exit;
 }
 

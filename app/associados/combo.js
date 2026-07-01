@@ -1,17 +1,16 @@
-$(document).ready(function () {
-    window.atualizarTotalVeiculo = function() { atualizarTotal(); };
+document.addEventListener('DOMContentLoaded', function () {
 
     function parseMoney(v) {
         if (v == null) return 0;
         v = String(v).replace(/\s|R\$/g, '').trim();
-        const hasComma = v.indexOf(',') !== -1;
-        const hasDot   = v.indexOf('.') !== -1;
+        var hasComma = v.indexOf(',') !== -1;
+        var hasDot   = v.indexOf('.') !== -1;
         if (hasComma && hasDot) {
             v = v.replace(/\./g, '').replace(',', '.');
         } else if (hasComma) {
             v = v.replace(',', '.');
         }
-        const n = parseFloat(v);
+        var n = parseFloat(v);
         return isNaN(n) ? 0 : n;
     }
 
@@ -22,55 +21,65 @@ $(document).ready(function () {
         });
     }
 
-    function atualizarTotal() {
-        const mensalidade    = parseMoney($('#mensalidade').val());
-        const valorCombo     = parseMoney($('#valorCombo').val());
-        const valorRastreador = parseMoney($('#valorRastreador').val());
-        const total = mensalidade + valorCombo + valorRastreador;
-        $('#totalFinal').val(
-            total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-        );
+    function maskBRL(e) {
+        var el  = e.target;
+        var raw = el.value.replace(/\D/g, '');
+        if (!raw) { el.value = ''; return; }
+        el.value = (parseInt(raw, 10) / 100).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
     }
 
+    function get(id) { return document.getElementById(id); }
+
+    function atualizarTotal() {
+        var mens  = parseMoney((get('mensalidade')     || {}).value);
+        var combo = parseMoney((get('valorCombo')      || {}).value);
+        var rast  = parseMoney((get('valorRastreador') || {}).value);
+        var el = get('totalFinal');
+        if (el) el.value = (mens + combo + rast).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+    window.atualizarTotalVeiculo = atualizarTotal;
+
     // Grupo → preenche adesão/mensalidade e recalcula
-    $('#grupo').on('change', function () {
-        const $opt = $(this).find(':selected');
-        $('#adesao').val(formatBR(parseMoney($opt.data('adesao') || '')));
-        $('#mensalidade').val(formatBR(parseMoney($opt.data('mensalidade') || '')));
+    document.addEventListener('change', function (e) {
+        if (!e.target || e.target.id !== 'grupo') return;
+        var opt = e.target.options[e.target.selectedIndex];
+        var elA = get('adesao');
+        var elM = get('mensalidade');
+        if (elA) elA.value = formatBR(parseMoney(opt ? (opt.getAttribute('data-adesao') || '') : ''));
+        if (elM) elM.value = formatBR(parseMoney(opt ? (opt.getAttribute('data-mensalidade') || '') : ''));
         atualizarTotal();
     });
 
-    // Combo → tratado via delegação em modal_cad_veiculo.php
-    $('#combo').on('change', function () {
-        if (typeof window.onComboChange === 'function') {
-            window.onComboChange($(this).val());
-        } else {
-            const valorStr = $(this).find(':selected').data('valor') || '';
-            $('#valorCombo').val(formatBR(parseMoney(valorStr)));
+    // Rastreador → preenche valor e recalcula
+    document.addEventListener('change', function (e) {
+        if (!e.target || e.target.id !== 'rastreador') return;
+        var opt = e.target.options[e.target.selectedIndex];
+        var val = (opt && e.target.value) ? (parseFloat(opt.getAttribute('data-valor')) || 0) : 0;
+        var el  = get('valorRastreador');
+        if (el) el.value = val ? formatBR(val) : '';
+        var lbl = get('labelTotalFinal');
+        if (lbl) lbl.textContent = val ? 'R$ Mensalidade + Combo + Rastreador' : 'R$ Mensalidade + Combo';
+        atualizarTotal();
+    });
+
+    // Máscara BRL ao digitar nos campos editáveis
+    document.addEventListener('input', function (e) {
+        var id = e.target && e.target.id;
+        if (id === 'valorCobertura' || id === 'adesao' || id === 'mensalidade') {
+            maskBRL(e);
+        }
+        if (id === 'mensalidade') {
             atualizarTotal();
         }
     });
 
-    // Rastreador → preenche valor e recalcula
-    $('#rastreador').on('change', function () {
-        const valorStr = $(this).find(':selected').data('valor') || '';
-        $('#valorRastreador').val(formatBR(parseMoney(valorStr)));
-        atualizarTotal();
+    // Normaliza campos já preenchidos (modo edição) e calcula o total
+    ['mensalidade', 'valorCombo', 'valorRastreador', 'adesao'].forEach(function (id) {
+        var el = get(id);
+        if (el && el.value) el.value = formatBR(parseMoney(el.value));
     });
-
-    // Mensalidade editada manualmente → recalcula
-    $('#mensalidade').on('input change', function () {
-        atualizarTotal();
-    });
-
-    // Normaliza campos já preenchidos (modo edição) e calcula
-    (function normalizarExistentes() {
-        ['#mensalidade', '#valorCombo', '#valorRastreador', '#adesao'].forEach(function (sel) {
-            const $el = $(sel);
-            if ($el.length && $el.val()) {
-                $el.val(formatBR(parseMoney($el.val())));
-            }
-        });
-        atualizarTotal();
-    })();
+    atualizarTotal();
 });

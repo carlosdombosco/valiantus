@@ -474,40 +474,28 @@ try {
         return (parseFloat(n) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    function recalcularTotal() {
-        var mens  = parseMoney($('#mensalidade').val());
-        var combo = parseMoney($('#valorCombo').val());
-        var rast  = parseMoney($('#valorRastreador').val());
-        $('#totalFinal').val((mens + combo + rast).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
-    }
-    window.recalcularTotal = recalcularTotal;
+    // Alias para código legado que chama window.recalcularTotal
+    window.recalcularTotal = function () {
+        if (typeof window.atualizarTotalVeiculo === 'function') window.atualizarTotalVeiculo();
+    };
 
-    // Delegação no document — captura o change do #combo independente de quando o DOM estiver pronto
+    // Combo → busca valor via AJAX e recalcula total
     document.addEventListener('change', function (e) {
         if (!e.target || e.target.id !== 'combo') return;
         var id = e.target.value;
-        if (!id) { document.getElementById('valorCombo').value = ''; recalcularTotal(); return; }
+        var elCombo = document.getElementById('valorCombo');
+        if (!id) {
+            if (elCombo) elCombo.value = '';
+            window.recalcularTotal();
+            return;
+        }
         fetch(COMBO_URL + '?acao=obter&id=' + encodeURIComponent(id) + '&_=' + Date.now())
             .then(function (r) { return r.json(); })
             .then(function (j) {
-                document.getElementById('valorCombo').value = (j.success && j.combo) ? formatBR(parseMoney(j.combo.COM_VALOR)) : '';
-                recalcularTotal();
+                if (elCombo) elCombo.value = (j.success && j.combo) ? formatBR(parseMoney(j.combo.COM_VALOR)) : '';
+                window.recalcularTotal();
             })
-            .catch(function () { document.getElementById('valorCombo').value = ''; recalcularTotal(); });
-    });
-
-    document.addEventListener('input',  function (e) { if (e.target && e.target.id === 'mensalidade') recalcularTotal(); });
-    document.addEventListener('change', function (e) { if (e.target && e.target.id === 'mensalidade') recalcularTotal(); });
-
-    document.addEventListener('change', function (e) {
-        if (!e.target || e.target.id !== 'rastreador') return;
-        var sel = e.target;
-        var opt = sel.options[sel.selectedIndex];
-        var val = (opt && sel.value) ? (parseFloat(opt.getAttribute('data-valor')) || 0) : 0;
-        document.getElementById('valorRastreador').value = val ? formatBR(val) : '';
-        recalcularTotal();
-        var lbl = document.getElementById('labelTotalFinal');
-        if (lbl) lbl.textContent = val ? 'R$ Mensalidade + Combo + Rastreador' : 'R$ Mensalidade + Combo';
+            .catch(function () { if (elCombo) elCombo.value = ''; window.recalcularTotal(); });
     });
 })();
 </script>

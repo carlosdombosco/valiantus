@@ -759,7 +759,25 @@ $csrf = csrf_token();
                 .then(json => {
                     if (json.success && json.existe) {
                         $('#btnSalvar').prop('disabled', true);
-                        Swal.fire('CPF já cadastrado', 'Já existe um associado com esse CPF.', 'error');
+                        const p = json.pessoa;
+                        const fone = p.telefone
+                            ? p.telefone.replace(/^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3')
+                            : '—';
+                        const cpfFmt = p.cpf
+                            ? p.cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
+                            : p.cpf;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'CPF já cadastrado',
+                            html:
+                                '<table style="width:100%;text-align:left;font-size:14px;border-collapse:collapse;">' +
+                                '<tr><td style="padding:4px 8px;color:#6c757d;">ID</td><td style="padding:4px 8px;font-weight:700;">#' + p.id + '</td></tr>' +
+                                '<tr style="background:#f8f9fa"><td style="padding:4px 8px;color:#6c757d;">Nome</td><td style="padding:4px 8px;font-weight:700;">' + p.nome + '</td></tr>' +
+                                '<tr><td style="padding:4px 8px;color:#6c757d;">CPF</td><td style="padding:4px 8px;font-weight:700;">' + cpfFmt + '</td></tr>' +
+                                '<tr style="background:#f8f9fa"><td style="padding:4px 8px;color:#6c757d;">Telefone</td><td style="padding:4px 8px;font-weight:700;">' + fone + '</td></tr>' +
+                                '</table>',
+                            confirmButtonColor: '#d33',
+                        });
                     } else {
                         $('#btnSalvar').prop('disabled', false);
                     }
@@ -780,10 +798,7 @@ $csrf = csrf_token();
                     method: 'POST',
                     body: fd
                 })
-                .then(r => {
-                    if (!r.ok) throw new Error('HTTP ' + r.status);
-                    return r.json();
-                })
+                .then(r => r.json())
                 .then(json => {
                     if (json.success) {
                         const isEdit = !!document.getElementById('pessoaId').value;
