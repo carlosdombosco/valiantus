@@ -177,11 +177,9 @@ $iniciais  = strtoupper(implode('', array_map(
                     <i class="fa-solid fa-chevron-right vl-sb-arrow"></i>
                 </button>
                 <ul class="vl-sb-submenu">
-                    <li><a href="#" class="vl-sb-sub-link">Gerar Boletos</a></li>
+                    <li><a href="<?= APP_URL ?>/movimentacao/gerar-boletos/" class="vl-sb-sub-link">Gerar Boletos</a></li>
                     <li><a href="<?= APP_URL ?>/movimentacao/gerar-remessa/" class="vl-sb-sub-link">Gerar Remessa</a></li>
-                    <li><a href="#" class="vl-sb-sub-link">Gerar Remessa Avulsa</a></li>
                     <li><a href="<?= APP_URL ?>/movimentacao/processar-retorno/" class="vl-sb-sub-link">Processar Retorno</a></li>
-                    <li><a href="#" class="vl-sb-sub-link">Espelho de Retorno</a></li>
                 </ul>
             </li>
 
