@@ -4,6 +4,7 @@ require_once __DIR__ . '/metrics.php';
 
 $totalContratosAtivos = total_contratos_ativos($pdo);
 $cancelamentosMes     = total_cancelamentos_mes_atual($pdo);
+$stats                = dash_stats($pdo);
 ?>
 
 <!-- ── Estilos do Dashboard ─────────────────────────────────────── -->
@@ -397,38 +398,38 @@ $cancelamentosMes     = total_cancelamentos_mes_atual($pdo);
     <!-- Linha 2: KPIs secundários -->
     <div class="kpi-grid-2">
         <div class="kpi-card kpi--amber">
-            <div class="kpi-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-car"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Boletos Bancários</div>
-                <div class="kpi-value">256</div>
-                <div class="kpi-sub">Emitidos no mês</div>
+                <div class="kpi-label">Veículos Ativos</div>
+                <div class="kpi-value"><?= number_format($stats['veic_ativos'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Com contrato ativo</div>
             </div>
         </div>
 
         <div class="kpi-card kpi--slate">
-            <div class="kpi-icon"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-car-on"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Boletos Internos</div>
-                <div class="kpi-value">92</div>
-                <div class="kpi-sub">Emitidos no mês</div>
+                <div class="kpi-label">Veículos Inativos</div>
+                <div class="kpi-value"><?= number_format($stats['veic_inativos'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Sem contrato ativo</div>
             </div>
         </div>
 
         <div class="kpi-card kpi--dark">
-            <div class="kpi-icon"><i class="fa-solid fa-car"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Total de Veículos</div>
-                <div class="kpi-value">412</div>
-                <div class="kpi-sub">Veículos associados</div>
+                <div class="kpi-label">Associados Ativos</div>
+                <div class="kpi-value"><?= number_format($stats['assoc_ativos'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Com contrato ativo</div>
             </div>
         </div>
 
         <div class="kpi-card kpi--violet">
-            <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-user-xmark"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Total de Clientes</div>
-                <div class="kpi-value">395</div>
-                <div class="kpi-sub">Clientes ativos</div>
+                <div class="kpi-label">Associados Inativos</div>
+                <div class="kpi-value"><?= number_format($stats['assoc_inativos'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Sem contrato ativo</div>
             </div>
         </div>
     </div>
@@ -437,8 +438,8 @@ $cancelamentosMes     = total_cancelamentos_mes_atual($pdo);
     <div class="birthday-card">
         <div class="birthday-card-text">
             <h4><i class="fa-solid fa-cake-candles" style="margin-right:6px;"></i>Aniversariantes Hoje</h4>
-            <span>3</span>
-            <small>associados fazem aniversário hoje</small>
+            <span><?= $stats['aniversariantes_hoje'] ?></span>
+            <small><?= $stats['aniversariantes_hoje'] === 1 ? 'associado faz aniversário hoje' : 'associados fazem aniversário hoje' ?></small>
         </div>
         <i class="fa-solid fa-gift birthday-card-icon" style="color:#fff;"></i>
     </div>
@@ -461,10 +462,10 @@ $cancelamentosMes     = total_cancelamentos_mes_atual($pdo);
         <div class="chart-card">
             <div class="chart-card-header">
                 <div>
-                    <p class="chart-card-title">Distribuição de Boletos</p>
-                    <p class="chart-card-subtitle">Bancários vs Internos</p>
+                    <p class="chart-card-title">Distribuição de Veículos</p>
+                    <p class="chart-card-subtitle">Ativos vs Inativos</p>
                 </div>
-                <span class="chart-badge">Mês atual</span>
+                <span class="chart-badge">Base atual</span>
             </div>
             <div class="chart-card-body">
                 <div id="graficoPizza"></div>
@@ -581,9 +582,9 @@ $cancelamentosMes     = total_cancelamentos_mes_atual($pdo);
                     speed: 600
                 }
             },
-            series: [256, 92],
-            labels: ['Bancário', 'Interno'],
-            colors: ['#3b5bdb', '#e67700'],
+            series: [<?= $stats['veic_ativos'] ?>, <?= $stats['veic_inativos'] ?>],
+            labels: ['Ativos', 'Inativos'],
+            colors: ['#2f9e44', '#c92a2a'],
             plotOptions: {
                 pie: {
                     donut: {
@@ -623,7 +624,7 @@ $cancelamentosMes     = total_cancelamentos_mes_atual($pdo);
             },
             tooltip: {
                 y: {
-                    formatter: v => v + ' boletos'
+                    formatter: v => v + ' veículos'
                 }
             }
         }).render();

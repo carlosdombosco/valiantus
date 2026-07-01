@@ -57,3 +57,44 @@ if (!function_exists('total_cancelamentos_mes_atual')) {
         }
     }
 }
+
+if (!function_exists('dash_stats')) {
+    function dash_stats(PDO $pdo): array
+    {
+        $defaults = [
+            'veic_ativos'          => 0,
+            'veic_inativos'        => 0,
+            'total_veiculos'       => 0,
+            'assoc_ativos'         => 0,
+            'assoc_inativos'       => 0,
+            'total_assoc'          => 0,
+            'aniversariantes_hoje' => 0,
+        ];
+        try {
+            $row = $pdo->query("
+                SELECT
+                    COUNT(DISTINCT p.PES_CODIGO_PK)                                                                AS total_assoc,
+                    COUNT(DISTINCT CASE WHEN c.CTR_STATUS = 'A' THEN p.PES_CODIGO_PK END)                         AS assoc_ativos,
+                    COUNT(DISTINCT CASE WHEN c.CTR_STATUS != 'A' OR c.CTR_STATUS IS NULL THEN p.PES_CODIGO_PK END) AS assoc_inativos,
+                    COUNT(DISTINCT v.VEI_CODIGO_PK)                                                                AS total_veiculos,
+                    COUNT(DISTINCT CASE WHEN c.CTR_STATUS = 'A' THEN v.VEI_CODIGO_PK END)                         AS veic_ativos,
+                    COUNT(DISTINCT CASE WHEN c.CTR_STATUS != 'A' THEN v.VEI_CODIGO_PK END)                        AS veic_inativos
+                FROM tb_pessoa p
+                LEFT JOIN tb_veiculo  v ON v.PES_CODIGO_FK = p.PES_CODIGO_PK
+                LEFT JOIN tb_contrato c ON c.VEI_CODIGO_FK = v.VEI_CODIGO_PK
+            ")->fetch(PDO::FETCH_ASSOC);
+            if ($row) $defaults = array_merge($defaults, array_map('intval', $row));
+        } catch (Throwable $e) {}
+
+        try {
+            $aniv = $pdo->query("
+                SELECT COUNT(*) AS total FROM tb_pessoa
+                WHERE DAY(PES_DATA_NASCIMENTO)   = DAY(CURDATE())
+                  AND MONTH(PES_DATA_NASCIMENTO) = MONTH(CURDATE())
+            ")->fetch(PDO::FETCH_ASSOC);
+            $defaults['aniversariantes_hoje'] = (int)($aniv['total'] ?? 0);
+        } catch (Throwable $e) {}
+
+        return $defaults;
+    }
+}
