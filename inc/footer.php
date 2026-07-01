@@ -125,11 +125,12 @@
         d.addEventListener('click', function (e) { e.stopPropagation(); });
     });
 
-    /* ── Logout com SweetAlert (funciona para qualquer [data-logout-url]) ── */
+    /* ── Logout com SweetAlert (fase de captura para ignorar stopPropagation dos dropdowns) ── */
     document.addEventListener('click', function (e) {
         var anchor = e.target.closest('[data-logout-url]');
         if (!anchor) return;
         e.preventDefault();
+        e.stopPropagation();
         var url = anchor.getAttribute('data-logout-url');
         if (!url) return;
 
@@ -143,7 +144,7 @@
         }).then(function (r) {
             if (r.isConfirmed) window.location.href = url;
         });
-    });
+    }, true);
 
 })();
 </script>
