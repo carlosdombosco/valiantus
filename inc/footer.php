@@ -24,6 +24,9 @@
 <!-- DataTables JS (depende de jQuery acima) -->
 <script src="https://cdn.datatables.net/v/bs4/dt-1.13.8/r-2.5.0/datatables.min.js"></script>
 
+<!-- SweetAlert2 — carregado APÓS o bundle Metronic para sobrescrever versão antiga -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- ════════════════════════════════════════
      Layout JS — topbar dropdowns + sidebar
      ════════════════════════════════════════ -->

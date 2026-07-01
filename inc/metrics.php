@@ -58,6 +58,76 @@ if (!function_exists('total_cancelamentos_mes_atual')) {
     }
 }
 
+if (!function_exists('dash_stats_financeiro')) {
+    function dash_stats_financeiro(PDO $pdo): array
+    {
+        $data = [
+            'valor_recebido_mes'  => 0.0,
+            'cobr_vencidas'       => 0,
+            'cobr_emitidas_mes'   => 0,
+            'sinistros_abertos'   => 0,
+            'contratos_novos_mes' => 0,
+            'aniversariantes_mes' => 0,
+        ];
+
+        try {
+            $r = $pdo->query("
+                SELECT COALESCE(SUM(COB_VALOR), 0) AS total FROM tb_cobranca
+                WHERE COB_PAGO = 'SIM'
+                  AND YEAR(COB_DATA_QUITACAO) = YEAR(CURDATE())
+                  AND MONTH(COB_DATA_QUITACAO) = MONTH(CURDATE())
+            ")->fetch(PDO::FETCH_ASSOC);
+            $data['valor_recebido_mes'] = (float)($r['total'] ?? 0);
+        } catch (Throwable $e) {}
+
+        try {
+            $r = $pdo->query("
+                SELECT COUNT(*) AS total FROM tb_cobranca
+                WHERE COB_PAGO != 'SIM'
+                  AND (COB_BOLETO_CANCELADO IS NULL OR COB_BOLETO_CANCELADO != 'SIM')
+                  AND COB_DATA_VENCIMENTO < CURDATE()
+            ")->fetch(PDO::FETCH_ASSOC);
+            $data['cobr_vencidas'] = (int)($r['total'] ?? 0);
+        } catch (Throwable $e) {}
+
+        try {
+            $r = $pdo->query("
+                SELECT COUNT(*) AS total FROM tb_cobranca
+                WHERE YEAR(COB_DATA_CRIACAO) = YEAR(CURDATE())
+                  AND MONTH(COB_DATA_CRIACAO) = MONTH(CURDATE())
+            ")->fetch(PDO::FETCH_ASSOC);
+            $data['cobr_emitidas_mes'] = (int)($r['total'] ?? 0);
+        } catch (Throwable $e) {}
+
+        try {
+            $r = $pdo->query("
+                SELECT COUNT(*) AS total FROM tb_sinistro
+                WHERE UPPER(SIN_STATUS) = 'ABERTO'
+            ")->fetch(PDO::FETCH_ASSOC);
+            $data['sinistros_abertos'] = (int)($r['total'] ?? 0);
+        } catch (Throwable $e) {}
+
+        try {
+            $r = $pdo->query("
+                SELECT COUNT(*) AS total FROM tb_contrato
+                WHERE YEAR(CTR_DATA_CONTRATO) = YEAR(CURDATE())
+                  AND MONTH(CTR_DATA_CONTRATO) = MONTH(CURDATE())
+            ")->fetch(PDO::FETCH_ASSOC);
+            $data['contratos_novos_mes'] = (int)($r['total'] ?? 0);
+        } catch (Throwable $e) {}
+
+        try {
+            $r = $pdo->query("
+                SELECT COUNT(*) AS total FROM tb_pessoa
+                WHERE MONTH(PES_DATA_NASCIMENTO) = MONTH(CURDATE())
+            ")->fetch(PDO::FETCH_ASSOC);
+            $data['aniversariantes_mes'] = (int)($r['total'] ?? 0);
+        } catch (Throwable $e) {}
+
+        return $data;
+    }
+}
+
 if (!function_exists('dash_stats')) {
     function dash_stats(PDO $pdo): array
     {

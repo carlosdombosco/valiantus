@@ -5,6 +5,7 @@ require_once __DIR__ . '/metrics.php';
 $totalContratosAtivos = total_contratos_ativos($pdo);
 $cancelamentosMes     = total_cancelamentos_mes_atual($pdo);
 $stats                = dash_stats($pdo);
+$fin                  = dash_stats_financeiro($pdo);
 ?>
 
 <!-- ── Estilos do Dashboard ─────────────────────────────────────── -->
@@ -370,18 +371,18 @@ $stats                = dash_stats($pdo);
         <div class="kpi-card kpi--green">
             <div class="kpi-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Recebido Hoje</div>
-                <div class="kpi-value">R$ 0,00</div>
+                <div class="kpi-label">Recebido no Mês</div>
+                <div class="kpi-value" style="font-size:18px;">R$ <?= number_format($fin['valor_recebido_mes'], 2, ',', '.') ?></div>
                 <div class="kpi-sub">Pagamentos confirmados</div>
             </div>
         </div>
 
         <div class="kpi-card kpi--teal">
-            <div class="kpi-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Projeção Hoje</div>
-                <div class="kpi-value">R$ 0,00</div>
-                <div class="kpi-sub">Esperado para o dia</div>
+                <div class="kpi-label">Cobranças no Mês</div>
+                <div class="kpi-value"><?= number_format($fin['cobr_emitidas_mes'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Emitidas no mês atual</div>
             </div>
         </div>
 
@@ -430,6 +431,45 @@ $stats                = dash_stats($pdo);
                 <div class="kpi-label">Associados Inativos</div>
                 <div class="kpi-value"><?= number_format($stats['assoc_inativos'], 0, ',', '.') ?></div>
                 <div class="kpi-sub">Sem contrato ativo</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Linha 3: KPIs operacionais -->
+    <div class="kpi-grid-2">
+        <div class="kpi-card kpi--red">
+            <div class="kpi-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">Cobranças Vencidas</div>
+                <div class="kpi-value"><?= number_format($fin['cobr_vencidas'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Não pagas em atraso</div>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi--amber">
+            <div class="kpi-icon"><i class="fa-solid fa-car-burst"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">Sinistros Abertos</div>
+                <div class="kpi-value"><?= number_format($fin['sinistros_abertos'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Aguardando resolução</div>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi--blue">
+            <div class="kpi-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">Novos Contratos</div>
+                <div class="kpi-value"><?= number_format($fin['contratos_novos_mes'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">Criados no mês atual</div>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi--violet">
+            <div class="kpi-icon"><i class="fa-solid fa-cake-candles"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">Aniversariantes</div>
+                <div class="kpi-value"><?= number_format($fin['aniversariantes_mes'], 0, ',', '.') ?></div>
+                <div class="kpi-sub">No mês de <?= date('F') ?></div>
             </div>
         </div>
     </div>
