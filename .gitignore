@@ -1,0 +1,44 @@
+# Dependências / ferramentas
+vendor/
+node_modules/
+
+# Configuração local do banco de dados
+inc/db.php
+
+# Uploads de usuários (não versionar arquivos de dados)
+uploads/*/
+uploads/**/*
+!uploads/.gitkeep
+
+# Storage (logs, cache)
+storage/logs/
+storage/cache/
+!storage/.gitkeep
+
+# Arquivos de debug e temporários
+debug_*.txt
+*.log
+*.tmp
+
+# Arquivos locais / IDE
+.env
+.env.local
+.idea/
+.vscode/
+*.suo
+*.user
+Thumbs.db
+.DS_Store
+
+# Arquivos do Firebird (banco local de migração)
+*.fbk
+*.FDB
+*.fdb
+
+# PDFs gerados / de teste
+boleto_sicoob.pdf
+sinistro.pdf
+
+# Scripts SQL avulsos (manter apenas migrations organizadas)
+alter_*.sql
+tb_*.sql

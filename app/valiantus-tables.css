@@ -1,0 +1,541 @@
+/**
+ * valiantus-tables.css
+ * CSS compartilhado para todas as páginas de listagem do sistema.
+ * Inclua este arquivo no header.php ou em cada página que usa tabelas.
+ */
+
+/* ── Variáveis ─────────────────────────────────────────────────── */
+:root {
+    --vt-bg: #f0f2f8;
+    --vt-card: #ffffff;
+    --vt-border: #e9ecef;
+    --vt-radius: 14px;
+    --vt-shadow: 0 2px 16px rgba(30, 40, 80, .07);
+    --vt-accent: #3b5bdb;
+    --vt-accent-bg: #e8edff;
+    --vt-green: #2f9e44;
+    --vt-green-bg: #d3f9d8;
+    --vt-red: #c92a2a;
+    --vt-red-bg: #ffe3e3;
+    --vt-amber: #e67700;
+    --vt-amber-bg: #fff3bf;
+    --vt-muted: #868e96;
+    --vt-ink: #1a1d2e;
+    --vt-font: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+}
+
+/* ── Portlet → Page Card ────────────────────────────────────────── */
+.vt-page {
+    font-family: var(--vt-font);
+    padding: 28px 28px 40px;
+}
+
+.vt-card {
+    background: var(--vt-card);
+    border-radius: var(--vt-radius);
+    box-shadow: var(--vt-shadow);
+    border: 1px solid var(--vt-border);
+    overflow: visible;
+    /* era hidden — causava scrollbar no body via DataTables */
+}
+
+/* Cabeçalho do card */
+.vt-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--vt-border);
+    background: var(--vt-card);
+    flex-wrap: wrap;
+}
+
+.vt-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vt-card-title h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--vt-ink);
+    margin: 0;
+    letter-spacing: -.2px;
+}
+
+.vt-card-title .vt-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--vt-accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vt-accent);
+    font-size: 15px;
+}
+
+.vt-card-tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Busca */
+.vt-search-wrap {
+    position: relative;
+}
+
+.vt-search-wrap i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--vt-muted);
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.vt-search {
+    height: 36px;
+    padding: 0 12px 0 34px;
+    border: 1.5px solid var(--vt-border);
+    border-radius: 8px;
+    font-family: var(--vt-font);
+    font-size: 13px;
+    color: var(--vt-ink);
+    background: #fafbfc;
+    outline: none;
+    width: 220px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.vt-search:focus {
+    border-color: var(--vt-accent);
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, .1);
+    background: #fff;
+}
+
+.vt-search::placeholder {
+    color: #adb5bd;
+}
+
+/* Botão novo registro */
+.vt-btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--vt-accent);
+    color: #fff;
+    font-family: var(--vt-font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .15s, box-shadow .15s, transform .12s;
+}
+
+.vt-btn-new:hover {
+    background: #2f4abf;
+    box-shadow: 0 4px 14px rgba(59, 91, 219, .3);
+    transform: translateY(-1px);
+    color: #fff;
+    text-decoration: none;
+}
+
+.vt-btn-new:active {
+    transform: translateY(0);
+}
+
+/* Corpo do card */
+.vt-card-body {
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* ── Garante que o wrapper do DataTables não vaze ── */
+.dataTables_wrapper {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* ── Tabela ─────────────────────────────────────────────────────── */
+.vt-table-wrap {
+    overflow-x: auto;
+}
+
+table.vt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--vt-font);
+    font-size: 13px;
+    color: var(--vt-ink);
+}
+
+table.vt-table thead th {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--vt-muted);
+    background: #f8f9fb;
+    border-bottom: 1px solid var(--vt-border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+table.vt-table tbody td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--vt-border);
+    vertical-align: middle;
+    font-size: 13px;
+    color: var(--vt-ink);
+    line-height: 1.4;
+}
+
+table.vt-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+table.vt-table tbody tr {
+    transition: background .1s;
+}
+
+table.vt-table tbody tr:hover {
+    background: #f8f9fb;
+}
+
+/* Expand icon */
+.vt-expand {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    border: 1.5px solid var(--vt-border);
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--vt-muted);
+    font-size: 11px;
+    transition: background .15s, border-color .15s, color .15s, transform .2s;
+}
+
+.vt-expand:hover {
+    background: var(--vt-accent-bg);
+    border-color: var(--vt-accent);
+    color: var(--vt-accent);
+}
+
+.vt-expand.open {
+    background: var(--vt-accent);
+    border-color: var(--vt-accent);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* ── Badges de status ───────────────────────────────────────────── */
+.vt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.vt-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.vt-badge--green {
+    background: var(--vt-green-bg);
+    color: var(--vt-green);
+}
+
+.vt-badge--red {
+    background: var(--vt-red-bg);
+    color: var(--vt-red);
+}
+
+.vt-badge--amber {
+    background: var(--vt-amber-bg);
+    color: var(--vt-amber);
+}
+
+.vt-badge--blue {
+    background: var(--vt-accent-bg);
+    color: var(--vt-accent);
+}
+
+.vt-badge--gray {
+    background: #f1f3f5;
+    color: var(--vt-muted);
+}
+
+/* ── Botões de ação na tabela ───────────────────────────────────── */
+.vt-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.vt-action-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1.5px solid var(--vt-border);
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--vt-muted);
+    font-size: 12px;
+    text-decoration: none;
+    transition: background .15s, border-color .15s, color .15s;
+    position: relative;
+}
+
+.vt-action-btn:hover {
+    text-decoration: none;
+}
+
+.vt-action-btn--edit:hover {
+    background: var(--vt-accent-bg);
+    border-color: var(--vt-accent);
+    color: var(--vt-accent);
+}
+
+.vt-action-btn--del:hover {
+    background: var(--vt-red-bg);
+    border-color: var(--vt-red);
+    color: var(--vt-red);
+}
+
+.vt-action-btn--car:hover {
+    background: var(--vt-amber-bg);
+    border-color: var(--vt-amber);
+    color: var(--vt-amber);
+}
+
+.vt-action-btn--ok:hover {
+    background: var(--vt-green-bg);
+    border-color: var(--vt-green);
+    color: var(--vt-green);
+}
+
+/* ── Sub-tabela (veículos inline) ───────────────────────────────── */
+.vt-subtable-wrap {
+    padding: 12px 16px 16px 48px;
+    background: #f8f9fb;
+    border-top: 1px solid var(--vt-border);
+}
+
+.vt-subtable-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: var(--vt-font);
+}
+
+.vt-subtable-wrap thead th {
+    padding: 8px 12px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--vt-muted);
+    background: transparent;
+    border-bottom: 1px solid var(--vt-border);
+}
+
+.vt-subtable-wrap tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--vt-border);
+    vertical-align: middle;
+    color: var(--vt-ink);
+}
+
+.vt-subtable-wrap tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ── Modal melhorado ────────────────────────────────────────────── */
+.vt-modal .modal-content {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(30, 40, 80, .18);
+    font-family: var(--vt-font);
+}
+
+.vt-modal .modal-header {
+    padding: 18px 24px 16px;
+    border-bottom: 1px solid var(--vt-border);
+    background: #f8f9fb;
+    border-radius: 14px 14px 0 0;
+}
+
+.vt-modal .modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--vt-ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vt-modal .modal-title i {
+    color: var(--vt-accent);
+}
+
+.vt-modal .modal-body {
+    padding: 20px 24px;
+}
+
+.vt-modal .modal-footer {
+    padding: 14px 24px;
+    border-top: 1px solid var(--vt-border);
+    background: #f8f9fb;
+    border-radius: 0 0 14px 14px;
+}
+
+.vt-modal .form-label,
+.vt-modal label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vt-muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.vt-modal .form-control,
+.vt-modal .form-select {
+    height: 36px;
+    padding: 0 10px;
+    border: 1.5px solid var(--vt-border);
+    border-radius: 8px;
+    font-family: var(--vt-font);
+    font-size: 13.5px;
+    color: var(--vt-ink);
+    background: #fafbfc;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    width: 100%;
+}
+
+.vt-modal textarea.form-control {
+    height: auto;
+    padding: 8px 10px;
+}
+
+.vt-modal .form-control:focus,
+.vt-modal .form-select:focus {
+    border-color: var(--vt-accent);
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, .1);
+    background: #fff;
+}
+
+.vt-modal .form-group {
+    margin-bottom: 14px;
+}
+
+.vt-modal .btn-primary {
+    background: var(--vt-accent);
+    border-color: var(--vt-accent);
+    font-family: var(--vt-font);
+    font-weight: 600;
+    border-radius: 8px;
+    height: 38px;
+    padding: 0 18px;
+}
+
+.vt-modal .btn-primary:hover {
+    background: #2f4abf;
+    border-color: #2f4abf;
+}
+
+.vt-modal .btn-secondary {
+    font-family: var(--vt-font);
+    font-weight: 500;
+    border-radius: 8px;
+    height: 38px;
+    padding: 0 18px;
+    background: transparent;
+    border: 1.5px solid var(--vt-border);
+    color: var(--vt-muted);
+}
+
+.vt-modal .btn-secondary:hover {
+    background: #f1f3f5;
+    color: var(--vt-ink);
+}
+
+/* DataTables sobrescritas */
+.dataTables_wrapper .dataTables_filter input {
+    border: 1.5px solid var(--vt-border) !important;
+    border-radius: 8px !important;
+    padding: 4px 10px !important;
+    font-family: var(--vt-font) !important;
+    font-size: 13px !important;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--vt-accent) !important;
+    outline: none !important;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border: 1.5px solid var(--vt-border) !important;
+    border-radius: 6px !important;
+    font-family: var(--vt-font) !important;
+    font-size: 13px !important;
+    padding: 2px 6px !important;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+    font-family: var(--vt-font) !important;
+    font-size: 13px !important;
+    color: var(--vt-muted) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 7px !important;
+    font-family: var(--vt-font) !important;
+    font-size: 13px !important;
+    padding: 4px 10px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--vt-accent) !important;
+    border-color: var(--vt-accent) !important;
+    color: #fff !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.disabled):hover {
+    background: var(--vt-accent-bg) !important;
+    border-color: var(--vt-accent) !important;
+    color: var(--vt-accent) !important;
+}

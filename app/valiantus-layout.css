@@ -1,0 +1,769 @@
+/**
+ * valiantus-layout.css
+ * Layout principal do sistema — substitui o shell do Metronic.
+ * Sem dependência de vendors.bundle ou style.bundle para estrutura.
+ */
+
+/* ══════════════════════════════════════════════
+   Reset & Base
+   ══════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    /* ── Cores ── */
+    --vl-sidebar-bg: #1a1d2e;
+    --vl-sidebar-w: 248px;
+    --vl-topbar-h: 60px;
+    --vl-topbar-bg: #ffffff;
+    --vl-topbar-border: #e9ecef;
+    --vl-body-bg: #f0f2f8;
+    --vl-accent: #3b5bdb;
+    --vl-accent-dim: #e8edff;
+    --vl-ink: #1a1d2e;
+    --vl-muted: #868e96;
+    --vl-border: #e9ecef;
+    --vl-font: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+    --vl-radius: 12px;
+    --vl-shadow-sm: 0 1px 8px rgba(30, 40, 80, .06);
+    --vl-shadow-md: 0 4px 20px rgba(30, 40, 80, .10);
+
+    /* ── Sidebar item ── */
+    --vl-sb-text: rgba(255, 255, 255, .62);
+    --vl-sb-text-on: #ffffff;
+    --vl-sb-hover: rgba(255, 255, 255, .06);
+    --vl-sb-active-bg: rgba(59, 91, 219, .18);
+    --vl-sb-border: rgba(255, 255, 255, .07);
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: var(--vl-font);
+    font-size: 14px;
+    color: var(--vl-ink);
+    background: var(--vl-body-bg);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    /* impede scrollbar horizontal no body */
+}
+
+/* ══════════════════════════════════════════════
+   Shell: Topbar + Sidebar + Content
+   ══════════════════════════════════════════════ */
+
+/* Topbar fixa no topo */
+.vl-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--vl-topbar-h);
+    background: var(--vl-topbar-bg);
+    border-bottom: 1px solid var(--vl-topbar-border);
+    box-shadow: var(--vl-shadow-sm);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+/* Área da brand (mesma largura do sidebar) */
+.vl-topbar-brand {
+    width: var(--vl-sidebar-w);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    background: var(--vl-sidebar-bg);
+    height: 100%;
+    border-bottom: 1px solid var(--vl-sb-border);
+}
+
+.vl-topbar-brand img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.vl-topbar-brand-text {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.vl-topbar-brand-text strong {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.vl-topbar-brand-text span {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, .5);
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+/* Botão hamburguer (mobile) — dentro da brand */
+.vl-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    flex-shrink: 0;
+    transition: background .15s;
+}
+
+.vl-hamburger:hover {
+    background: var(--vl-sb-hover);
+}
+
+.vl-hamburger span {
+    display: block;
+    height: 2px;
+    background: rgba(255, 255, 255, .8);
+    border-radius: 2px;
+    transition: transform .25s, opacity .25s, width .25s;
+    transform-origin: center;
+}
+
+.vl-hamburger span:nth-child(2) {
+    width: 70%;
+}
+
+.vl-hamburger.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.vl-hamburger.open span:nth-child(2) {
+    opacity: 0;
+    width: 100%;
+}
+
+.vl-hamburger.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Área de ações da topbar (direita) */
+.vl-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    padding: 0 20px;
+}
+
+/* Botão genérico topbar */
+.vl-tb-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    border: 1.5px solid var(--vl-border);
+    background: transparent;
+    color: var(--vl-muted);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .15s, color .15s, border-color .15s;
+}
+
+.vl-tb-btn:hover {
+    background: var(--vl-accent-dim);
+    color: var(--vl-accent);
+    border-color: #c5d0ff;
+    text-decoration: none;
+}
+
+/* Badge de notificação */
+.vl-tb-notif-dot {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #c92a2a;
+    border: 2px solid var(--vl-topbar-bg);
+}
+
+/* Avatar com iniciais */
+.vl-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--vl-accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid var(--vl-accent-dim);
+    user-select: none;
+    transition: border-color .15s, box-shadow .15s;
+    flex-shrink: 0;
+}
+
+.vl-avatar:hover {
+    border-color: var(--vl-accent);
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, .15);
+}
+
+/* ── Dropdown genérico da topbar ── */
+.vl-tb-dropdown-wrap {
+    position: relative;
+}
+
+.vl-tb-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: #fff;
+    border: 1px solid var(--vl-border);
+    border-radius: 14px;
+    box-shadow: var(--vl-shadow-md);
+    z-index: 9999;
+    display: none;
+    overflow: hidden;
+    min-width: 260px;
+    animation: vlDropIn .18s ease;
+}
+
+.vl-tb-dropdown.open {
+    display: block;
+}
+
+@keyframes vlDropIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.vl-drop-head {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--vl-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8f9fb;
+}
+
+.vl-drop-head h6 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--vl-ink);
+    margin: 0;
+}
+
+.vl-drop-head-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 99px;
+    background: var(--vl-accent-dim);
+    color: var(--vl-accent);
+}
+
+/* Lista de notificações */
+.vl-notif-list {
+    padding: 6px 0;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.vl-notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: background .1s;
+}
+
+.vl-notif-item:hover {
+    background: #f8f9fb;
+}
+
+.vl-notif-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--vl-accent);
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.vl-notif-dot.warn {
+    background: #e67700;
+}
+
+.vl-notif-text {
+    font-size: 13px;
+    color: var(--vl-ink);
+    line-height: 1.4;
+    flex: 1;
+}
+
+.vl-notif-time {
+    font-size: 11px;
+    color: var(--vl-muted);
+    white-space: nowrap;
+    margin-top: 2px;
+}
+
+.vl-drop-footer {
+    padding: 10px 18px;
+    border-top: 1px solid var(--vl-border);
+    text-align: center;
+}
+
+.vl-drop-footer a {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--vl-accent);
+    text-decoration: none;
+}
+
+.vl-drop-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Dropdown de perfil */
+.vl-profile-drop {
+    min-width: 230px;
+}
+
+.vl-profile-info {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid var(--vl-border);
+    text-align: center;
+    gap: 6px;
+    background: #f8f9fb;
+}
+
+.vl-profile-avatar-lg {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--vl-accent);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+}
+
+.vl-profile-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--vl-ink);
+}
+
+.vl-profile-role {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 99px;
+    background: var(--vl-accent-dim);
+    color: var(--vl-accent);
+}
+
+.vl-profile-menu {
+    padding: 8px;
+}
+
+.vl-profile-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--vl-ink);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .12s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+
+.vl-profile-item i {
+    color: var(--vl-muted);
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+}
+
+.vl-profile-item:hover {
+    background: #f1f3f5;
+    text-decoration: none;
+}
+
+.vl-profile-item.logout {
+    color: #c92a2a;
+}
+
+.vl-profile-item.logout i {
+    color: #c92a2a;
+}
+
+.vl-profile-item.logout:hover {
+    background: #fff5f5;
+}
+
+.vl-profile-divider {
+    height: 1px;
+    background: var(--vl-border);
+    margin: 6px 0;
+}
+
+/* ══════════════════════════════════════════════
+   Sidebar
+   ══════════════════════════════════════════════ */
+.vl-sidebar {
+    position: fixed;
+    top: var(--vl-topbar-h);
+    left: 0;
+    width: var(--vl-sidebar-w);
+    height: calc(100vh - var(--vl-topbar-h));
+    background: var(--vl-sidebar-bg);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .1) transparent;
+}
+
+.vl-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.vl-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .1);
+    border-radius: 4px;
+}
+
+.vl-sidebar-nav {
+    padding: 12px 12px 24px;
+    flex: 1;
+    font-family: var(--vl-font);
+}
+
+/* Label de seção */
+.vl-sb-section {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .28);
+    padding: 14px 10px 5px;
+    user-select: none;
+}
+
+/* Item */
+.vl-sb-item {
+    list-style: none;
+}
+
+/* Link */
+.vl-sb-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    text-decoration: none;
+    color: var(--vl-sb-text);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background .14s, color .14s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.vl-sb-link:hover {
+    background: var(--vl-sb-hover);
+    color: var(--vl-sb-text-on);
+    text-decoration: none;
+}
+
+.vl-sb-link.active,
+.vl-sb-link[aria-expanded="true"] {
+    background: var(--vl-sb-active-bg);
+    color: var(--vl-sb-text-on);
+}
+
+/* Ícone do item */
+.vl-sb-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+    transition: background .14s, color .14s;
+    color: var(--vl-sb-text);
+}
+
+.vl-sb-link:hover .vl-sb-icon,
+.vl-sb-link.active .vl-sb-icon,
+.vl-sb-link[aria-expanded="true"] .vl-sb-icon {
+    background: var(--vl-accent);
+    color: #fff;
+}
+
+.vl-sb-label {
+    flex: 1;
+}
+
+/* Seta de accordion */
+.vl-sb-arrow {
+    font-size: 10px;
+    opacity: .45;
+    transition: transform .22s;
+    flex-shrink: 0;
+}
+
+.vl-sb-link[aria-expanded="true"] .vl-sb-arrow {
+    transform: rotate(90deg);
+    opacity: 1;
+}
+
+/* Submenu */
+.vl-sb-submenu {
+    list-style: none;
+    padding: 3px 0 3px 42px;
+    margin: 0;
+    display: none;
+}
+
+.vl-sb-submenu.open {
+    display: block;
+}
+
+.vl-sb-sub-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 7px;
+    text-decoration: none;
+    color: var(--vl-sb-text);
+    font-size: 13px;
+    font-weight: 400;
+    transition: background .12s, color .12s;
+}
+
+.vl-sb-sub-link::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .22);
+    flex-shrink: 0;
+    transition: background .12s;
+}
+
+.vl-sb-sub-link:hover {
+    background: var(--vl-sb-hover);
+    color: var(--vl-sb-text-on);
+    text-decoration: none;
+}
+
+.vl-sb-sub-link:hover::before,
+.vl-sb-sub-link.active::before {
+    background: var(--vl-accent);
+}
+
+.vl-sb-sub-link.active {
+    color: var(--vl-sb-text-on);
+}
+
+/* Divider */
+.vl-sb-divider {
+    height: 1px;
+    background: var(--vl-sb-border);
+    margin: 10px 10px;
+}
+
+/* Logout */
+.vl-sb-logout .vl-sb-link:hover {
+    background: rgba(201, 42, 42, .15);
+    color: #ff8787;
+}
+
+.vl-sb-logout .vl-sb-link:hover .vl-sb-icon {
+    background: rgba(201, 42, 42, .7);
+    color: #fff;
+}
+
+/* ══════════════════════════════════════════════
+   Content area
+   ══════════════════════════════════════════════ */
+.vl-content {
+    margin-left: var(--vl-sidebar-w);
+    margin-top: var(--vl-topbar-h);
+    min-height: calc(100vh - var(--vl-topbar-h));
+    transition: margin-left .28s cubic-bezier(.4, 0, .2, 1);
+    overflow-x: hidden;
+    /* contém qualquer elemento filho que extrapole */
+}
+
+/* ── Footer ── */
+.vl-footer {
+    padding: 16px 28px;
+    font-size: 12px;
+    color: var(--vl-muted);
+    border-top: 1px solid var(--vl-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff;
+    flex-wrap: wrap;
+}
+
+.vl-footer a {
+    color: var(--vl-muted);
+    text-decoration: none;
+}
+
+.vl-footer a:hover {
+    color: var(--vl-accent);
+}
+
+.vl-footer-links {
+    display: flex;
+    gap: 16px;
+}
+
+/* ══════════════════════════════════════════════
+   Overlay (mobile)
+   ══════════════════════════════════════════════ */
+.vl-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .45);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity .28s;
+}
+
+.vl-overlay.open {
+    display: block;
+    opacity: 1;
+}
+
+/* ══════════════════════════════════════════════
+   Responsivo
+   ══════════════════════════════════════════════ */
+@media (max-width: 991px) {
+    .vl-topbar-brand-text {
+        display: none;
+    }
+
+    .vl-hamburger {
+        display: flex;
+    }
+
+    .vl-sidebar {
+        transform: translateX(calc(-1 * var(--vl-sidebar-w)));
+    }
+
+    .vl-sidebar.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, .25);
+    }
+
+    .vl-content {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 992px) {
+    .vl-hamburger {
+        display: none;
+    }
+}
+
+/* ══════════════════════════════════════════════
+   Utilitários gerais (usados nas páginas internas)
+   ══════════════════════════════════════════════ */
+.modal {
+    z-index: 1060;
+}
+
+.modal-backdrop {
+    z-index: 1050;
+}
+
+.modal-custom-width {
+    max-width: 60% !important;
+}
+
+input,
+select,
+textarea,
+body,
+.form-control {
+    font-family: var(--vl-font) !important;
+}
+
+
+html,
+body {
+    overflow-x: hidden;
+}
+
+.vl-content {
+    overflow-x: hidden;
+}

@@ -1,0 +1,18 @@
+<?php
+$host   = 'localhost';
+$dbname = 'nome_do_banco';
+$user   = 'usuario_mysql';
+$pass   = 'senha_mysql';
+
+$dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci"
+];
+
+$pdo = new PDO($dsn, $user, $pass, $options);
+
+$pdo->exec("SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci");
+$pdo->exec("SET CHARACTER SET utf8mb4");
