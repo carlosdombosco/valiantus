@@ -211,10 +211,7 @@ $iniciais  = strtoupper(implode('', array_map(
                 </button>
                 <ul class="vl-sb-submenu">
                     <li><a href="<?= APP_URL ?>/impressoes/checklist_branco.php" target="_blank" class="vl-sb-sub-link">Checklist (em branco)</a></li>
-                    <li><a href="#" class="vl-sb-sub-link">Termo de Filiação</a></li>
-                    <li><a href="#" class="vl-sb-sub-link">Tabela de Preço</a></li>
-                    <li><a href="#" class="vl-sb-sub-link">Recibo de Filiação</a></li>
-                    <li><a href="#" class="vl-sb-sub-link">Serviços Adicionais</a></li>
+                    <li><a href="<?= APP_URL ?>/impressoes/tabela_preco.php" target="_blank" class="vl-sb-sub-link">Tabela de Preços</a></li>
                 </ul>
             </li>
 
@@ -249,6 +246,13 @@ $iniciais  = strtoupper(implode('', array_map(
             <div class="vl-sb-section">Sistema</div>
 
             <li class="vl-sb-item">
+                <a href="<?= APP_URL ?>/usuarios/" class="vl-sb-link">
+                    <span class="vl-sb-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span class="vl-sb-label">Usuários</span>
+                </a>
+            </li>
+
+            <li class="vl-sb-item">
                 <a href="<?= APP_URL ?>/configuracoes/" class="vl-sb-link">
                     <span class="vl-sb-icon"><i class="fa-solid fa-gear"></i></span>
                     <span class="vl-sb-label">Configurações</span>
@@ -258,7 +262,7 @@ $iniciais  = strtoupper(implode('', array_map(
             <li class="vl-sb-item">
                 <a href="<?= BASE_URL ?>/migrar/" class="vl-sb-link">
                     <span class="vl-sb-icon"><i class="fa-solid fa-database"></i></span>
-                    <span class="vl-sb-label">Migração Ciclo</span>
+                    <span class="vl-sb-label">Migração Valiantus</span>
                 </a>
             </li>
 

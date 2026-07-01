@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../inc/config.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
 require PATH_INC . '/db.php';
 require PATH_INC . '/csrf.php';
 
