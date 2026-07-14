@@ -1146,6 +1146,30 @@ try {
             const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.disabled = true;
             const fd = new FormData(form);
+
+            // Fallback: se codigo_associado estiver vazio, tenta pegar do atributo do modal
+            if (!fd.get('codigo_associado')) {
+                const codigoFallback = $('#modalVeiculo').attr('data-assoc-codigo') || '';
+                if (codigoFallback) fd.set('codigo_associado', codigoFallback);
+            }
+
+            // Validação client-side com Swal específico por campo
+            const assocId = (fd.get('codigo_associado') || '').trim();
+            const placa   = (fd.get('placa') || '').replace(/[^A-Z0-9]/gi, '');
+            const chassi  = (fd.get('chassi') || '').trim();
+            const campos  = [
+                [!assocId, 'Associado não identificado', 'Feche e reabra o modal para tentar novamente.'],
+                [!placa,   'Placa obrigatória',          'Preencha a placa do veículo (aba Dados do Veículo).'],
+                [!chassi,  'Chassi obrigatório',         'Preencha o chassi do veículo (aba Dados do Veículo).'],
+            ];
+            for (const [erro, titulo, texto] of campos) {
+                if (erro) {
+                    Swal.fire({ icon: 'warning', title: titulo, text: texto });
+                    if (submitBtn) submitBtn.disabled = false;
+                    return;
+                }
+            }
+
             if (fd.get('valor')) fd.set('valor', moneyToDecimal(fd.get('valor')));
             if (fd.get('valorCobertura')) fd.set('valorCobertura', moneyToDecimal(fd.get('valorCobertura')));
             fetch(form.action, {
