@@ -24,6 +24,12 @@ function log_evento(PDO $pdo, string $tabela, int $registroId, string $tipo, arr
     static $ready = false;
     try {
         if (!$ready) {
+            // DDL (CREATE TABLE) causa commit implícito no MySQL e encerra qualquer
+            // transação ativa. Só executa fora de transação; dentro, tenta direto e
+            // captura o erro caso a tabela ainda não exista.
+            if ($pdo->inTransaction()) {
+                $ready = true; // otimista — se a tabela não existir, o INSERT abaixo falhará e vai para o catch
+            } else {
             $pdo->exec("CREATE TABLE IF NOT EXISTS `tb_log_evento` (
                 `LOG_CODIGO_PK`    INT UNSIGNED NOT NULL AUTO_INCREMENT,
                 `LOG_TABELA`       VARCHAR(60)  NOT NULL                          COMMENT 'Tabela afetada (tb_contrato, tb_veiculo, ...)',
@@ -43,6 +49,7 @@ function log_evento(PDO $pdo, string $tabela, int $registroId, string $tipo, arr
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
               COMMENT='Log geral de eventos do sistema'");
             $ready = true;
+            } // end else (not in transaction)
         }
 
         $obs = $opts['obs'] ?? null;

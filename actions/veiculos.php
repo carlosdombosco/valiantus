@@ -566,14 +566,16 @@ if ($acao === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
         log_line($RID, 'cadastrar ERRO', ['msg' => $e->getMessage(), 'code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
-        if ($e instanceof RuntimeException) {
-            $msg = $e->getMessage();
-        } elseif ($e instanceof PDOException && $e->getCode() === '23000') {
+        if ($e instanceof PDOException && $e->getCode() === '23000') {
             $em  = $e->getMessage();
             $msg = 'Não foi possível salvar os dados.';
             if (stripos($em, 'VEI_PLACA')   !== false) $msg = 'Placa já cadastrada.';
             elseif (stripos($em, 'VEI_CHASSI')  !== false) $msg = 'Chassi já cadastrado.';
             elseif (stripos($em, 'VEI_RENAVAM') !== false) $msg = 'RENAVAM já cadastrado.';
+        } elseif ($e instanceof PDOException) {
+            $msg = 'Não foi possível salvar os dados.';
+        } elseif ($e instanceof RuntimeException) {
+            $msg = $e->getMessage();
         } else {
             $msg = 'Não foi possível salvar os dados.';
         }
