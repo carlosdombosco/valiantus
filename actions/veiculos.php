@@ -565,6 +565,7 @@ if ($acao === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['success' => true, 'message' => 'Veículo cadastrado com sucesso', 'veiculo_id' => $veiculoId, 'vistoria_id' => $vistoriaId, 'rid' => $RID]);
     } catch (Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
+        log_line($RID, 'cadastrar ERRO', ['msg' => $e->getMessage(), 'code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
         $msg = 'Não foi possível salvar os dados.';
         if ($e instanceof PDOException && $e->getCode() === '23000') {
             $em = $e->getMessage();
@@ -573,7 +574,7 @@ if ($acao === 'cadastrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             elseif (stripos($em, 'VEI_RENAVAM') !== false) $msg = 'RENAVAM já cadastrado.';
         }
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => $msg, 'rid' => $RID]);
+        echo json_encode(['success' => false, 'message' => $msg, 'rid' => $RID, 'debug' => $e->getMessage()]);
     }
     exit;
 }
