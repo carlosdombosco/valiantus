@@ -1087,6 +1087,7 @@ try {
             const $hidden = $modal.find('#codigo_associado');
             const $cpfProp = $modal.find('#cpf_proprietario');
             const $nomProp = $modal.find('#nome_proprietario');
+            console.log('[VT-aplicar] nome=', nome, 'codigo=', codigo, '$hidden.length=', $hidden.length);
             if (codigo != null && String(codigo).trim() !== '') {
                 const label = nome ? `Novo Veículo para: ${nome} - ID: ${codigo}` : `Novo Veículo — Associado #${codigo}`;
                 $titulo.text(label);
@@ -1111,14 +1112,17 @@ try {
             this.value = this.value.replace(/\D/g, '');
         });
         $(document).on('click', '[data-target="#modalVeiculo"], [href="#modalVeiculo"]', function() {
-            aplicarAssociado($('#modalVeiculo'), $(this).attr('data-nome'), $(this).attr('data-codigo'), $(this).attr('data-cpf'));
+            const nome   = $(this).attr('data-nome');
+            const codigo = $(this).attr('data-codigo');
+            const cpf    = $(this).attr('data-cpf');
+            console.log('[VT-click] nome=', nome, 'codigo=', codigo, 'cpf=', cpf, 'el=', this);
+            aplicarAssociado($('#modalVeiculo'), nome, codigo, cpf);
         });
         $(document).on('shown.bs.modal', '#modalVeiculo', function(e) {
             const $m = $(this);
             const $t = e.relatedTarget ? $(e.relatedTarget) : null;
             const codigo = $t ? $t.attr('data-codigo') : $m.attr('data-assoc-codigo');
-            // only call aplicarAssociado if we actually have a codigo; otherwise leave
-            // whatever the click handler already set on the hidden input
+            console.log('[VT-shown] relatedTarget=', e.relatedTarget, 'codigo=', codigo, 'hidden#val=', $m.find('#codigo_associado').val());
             if (codigo != null && String(codigo).trim() !== '') {
                 const nome = $t ? $t.attr('data-nome') : $m.attr('data-assoc-nome');
                 const cpf  = $t ? $t.attr('data-cpf')  : $m.attr('data-assoc-cpf');
@@ -1154,6 +1158,7 @@ try {
             const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.disabled = true;
             const fd = new FormData(form);
+            console.log('[VT-submit] codigo_associado no form=', fd.get('codigo_associado'), '| data-assoc-codigo=', $('#modalVeiculo').attr('data-assoc-codigo'), '| hidden#val=', document.getElementById('codigo_associado')?.value);
 
             // Fallback: se codigo_associado estiver vazio, tenta pegar do atributo do modal
             if (!fd.get('codigo_associado')) {
