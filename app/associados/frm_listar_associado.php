@@ -1028,8 +1028,8 @@ try {
                     </a>
                     <a href="#" class="vt-action-btn vt-action-btn--car"
                        title="Adicionar veículo"
-                       data-toggle="modal" data-target="#modalVeiculo"
                        data-nome="${nome}" data-codigo="${id}" data-cpf="${cpfRaw}"
+                       onclick="vtAbrirModalVeiculo(this);return false;"
                        style="width:38px;gap:2px;">
                         <i class="fa-solid fa-car" style="font-size:11px;"></i>
                         <i class="fa-solid fa-plus" style="font-size:7px;margin-left:1px;"></i>
@@ -1077,6 +1077,23 @@ try {
 </script>
 
 <script>
+    // Função global: chamada diretamente pelo onclick do botão de card
+    function vtAbrirModalVeiculo(btn) {
+        var nome   = btn.getAttribute('data-nome')   || '';
+        var codigo = btn.getAttribute('data-codigo') || '';
+        var cpf    = btn.getAttribute('data-cpf')    || '';
+        var $m = $('#modalVeiculo');
+        var $hidden = $m.find('#codigo_associado');
+        $hidden.val(codigo);
+        $m.attr({ 'data-assoc-nome': nome, 'data-assoc-codigo': codigo, 'data-assoc-cpf': codigo ? cpf : '' });
+        var label = nome ? ('Novo Veículo para: ' + nome + ' - ID: ' + codigo) : (codigo ? 'Novo Veículo — Associado #' + codigo : 'Novo Veículo');
+        $m.find('#tituloModalVeiculo').text(label);
+        if ($m.find('#cpf_proprietario').length) $m.find('#cpf_proprietario').val(cpf.replace(/\D/g,''));
+        if ($m.find('#nome_proprietario').length) $m.find('#nome_proprietario').val(nome);
+        $m.modal('show');
+    }
+</script>
+<script>
     (function() {
         function toDigits(v) {
             return String(v == null ? '' : v).replace(/\D/g, '');
@@ -1087,7 +1104,6 @@ try {
             const $hidden = $modal.find('#codigo_associado');
             const $cpfProp = $modal.find('#cpf_proprietario');
             const $nomProp = $modal.find('#nome_proprietario');
-            console.log('[VT-aplicar] nome=', nome, 'codigo=', codigo, '$hidden.length=', $hidden.length);
             if (codigo != null && String(codigo).trim() !== '') {
                 const label = nome ? `Novo Veículo para: ${nome} - ID: ${codigo}` : `Novo Veículo — Associado #${codigo}`;
                 $titulo.text(label);
@@ -1111,18 +1127,14 @@ try {
         $(document).on('input', '#cpf_proprietario', function() {
             this.value = this.value.replace(/\D/g, '');
         });
-        $(document).on('click', '[data-target="#modalVeiculo"], [href="#modalVeiculo"]', function() {
-            const nome   = $(this).attr('data-nome');
-            const codigo = $(this).attr('data-codigo');
-            const cpf    = $(this).attr('data-cpf');
-            console.log('[VT-click] nome=', nome, 'codigo=', codigo, 'cpf=', cpf, 'el=', this);
-            aplicarAssociado($('#modalVeiculo'), nome, codigo, cpf);
+        // Handler para botões da tabela (view lista) — cards usam vtAbrirModalVeiculo() diretamente
+        $(document).on('click', '#html_table [data-target="#modalVeiculo"]', function() {
+            aplicarAssociado($('#modalVeiculo'), $(this).attr('data-nome'), $(this).attr('data-codigo'), $(this).attr('data-cpf'));
         });
         $(document).on('shown.bs.modal', '#modalVeiculo', function(e) {
             const $m = $(this);
             const $t = e.relatedTarget ? $(e.relatedTarget) : null;
             const codigo = $t ? $t.attr('data-codigo') : $m.attr('data-assoc-codigo');
-            console.log('[VT-shown] relatedTarget=', e.relatedTarget, 'codigo=', codigo, 'hidden#val=', $m.find('#codigo_associado').val());
             if (codigo != null && String(codigo).trim() !== '') {
                 const nome = $t ? $t.attr('data-nome') : $m.attr('data-assoc-nome');
                 const cpf  = $t ? $t.attr('data-cpf')  : $m.attr('data-assoc-cpf');
@@ -1158,8 +1170,6 @@ try {
             const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.disabled = true;
             const fd = new FormData(form);
-            console.log('[VT-submit] codigo_associado no form=', fd.get('codigo_associado'), '| data-assoc-codigo=', $('#modalVeiculo').attr('data-assoc-codigo'), '| hidden#val=', document.getElementById('codigo_associado')?.value);
-
             // Fallback: se codigo_associado estiver vazio, tenta pegar do atributo do modal
             if (!fd.get('codigo_associado')) {
                 const codigoFallback = $('#modalVeiculo').attr('data-assoc-codigo') || '';
