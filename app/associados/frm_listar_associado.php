@@ -1087,16 +1087,17 @@ try {
             const $hidden = $modal.find('#codigo_associado');
             const $cpfProp = $modal.find('#cpf_proprietario');
             const $nomProp = $modal.find('#nome_proprietario');
-            if (nome && String(codigo).trim() !== '') {
-                $titulo.text(`Novo Veículo para: ${nome} - ID: ${codigo}`);
+            if (codigo != null && String(codigo).trim() !== '') {
+                const label = nome ? `Novo Veículo para: ${nome} - ID: ${codigo}` : `Novo Veículo — Associado #${codigo}`;
+                $titulo.text(label);
                 $hidden.val(codigo);
                 $modal.attr({
-                    'data-assoc-nome': nome,
+                    'data-assoc-nome': nome || '',
                     'data-assoc-codigo': codigo
                 });
                 if (cpf != null) $modal.attr('data-assoc-cpf', toDigits(cpf));
                 if ($cpfProp.length) $cpfProp.val(toDigits(cpf));
-                if ($nomProp.length) $nomProp.val(nome);
+                if ($nomProp.length) $nomProp.val(nome || '');
             } else {
                 $titulo.text('Novo Veículo');
                 $hidden.val('');
@@ -1113,9 +1114,16 @@ try {
             aplicarAssociado($('#modalVeiculo'), $(this).attr('data-nome'), $(this).attr('data-codigo'), $(this).attr('data-cpf'));
         });
         $(document).on('shown.bs.modal', '#modalVeiculo', function(e) {
-            const $m = $(this),
-                $t = e.relatedTarget ? $(e.relatedTarget) : null;
-            aplicarAssociado($m, $t ? $t.attr('data-nome') : $m.attr('data-assoc-nome'), $t ? $t.attr('data-codigo') : $m.attr('data-assoc-codigo'), $t ? $t.attr('data-cpf') : $m.attr('data-assoc-cpf'));
+            const $m = $(this);
+            const $t = e.relatedTarget ? $(e.relatedTarget) : null;
+            const codigo = $t ? $t.attr('data-codigo') : $m.attr('data-assoc-codigo');
+            // only call aplicarAssociado if we actually have a codigo; otherwise leave
+            // whatever the click handler already set on the hidden input
+            if (codigo != null && String(codigo).trim() !== '') {
+                const nome = $t ? $t.attr('data-nome') : $m.attr('data-assoc-nome');
+                const cpf  = $t ? $t.attr('data-cpf')  : $m.attr('data-assoc-cpf');
+                aplicarAssociado($m, nome, codigo, cpf);
+            }
         });
         $(document).on('hidden.bs.modal', '#modalVeiculo', function() {
             aplicarAssociado($(this), null, null, null);
